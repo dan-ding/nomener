@@ -1,6 +1,6 @@
 # Nomener
 
-Nomener assists with parsing peoples names that they give themselves (or other people). Nomener is a fork of [https://github.com/dan-ding/people]People as it uses some code contributed there. It's currently geared towards western style name formatting, however other cultural name formatting is (or would like to be supported).Currently it attempts to parse names through pattern matching without using dictionary/library/data files (except for name decorations and suffixes, see usage). It may not be possible to do without such in all languages.
+Nomener assists with parsing peoples names that they give themselves (or other people). Nomener is a fork of [People](https://github.com/dan-ding/people) as it uses some code contributed there. It's currently geared towards western style name formatting, however other cultural name formatting is (or would like to be supported).Currently it attempts to parse names through pattern matching without using dictionary/library/data files (except for name decorations and suffixes, see usage). It may not be possible to do without such in all languages.
 
 If you didn't know, parsing names can be much more difficult than it seems it should be.
 
@@ -29,11 +29,11 @@ TODO: Write usage instructions here
 * many other things
 
 ## References
-* [http://en.wikipedia.org/wiki/Personal_name]http://en.wikipedia.org/wiki/Personal_name
-* [http://en.wikipedia.org/wiki/Surname]http://en.wikipedia.org/wiki/Surname
-* [http://en.wikipedia.org/wiki/Title]http://en.wikipedia.org/wiki/Title
-* [http://www.w3.org/International/questions/qa-personal-names]http://www.w3.org/International/questions/qa-personal-names
-* [http://heraldry.sca.org/titles.html]http://heraldry.sca.org/titles.html
+* [http://en.wikipedia.org/wiki/Personal_name](http://en.wikipedia.org/wiki/Personal_name)
+* [http://en.wikipedia.org/wiki/Surname](http://en.wikipedia.org/wiki/Surname)
+* [http://en.wikipedia.org/wiki/Title](http://en.wikipedia.org/wiki/Title)
+* [http://www.w3.org/International/questions/qa-personal-names](http://www.w3.org/International/questions/qa-personal-names)
+* [http://heraldry.sca.org/titles.html](http://heraldry.sca.org/titles.html)
 
 ## Contributing
 
@@ -45,8 +45,8 @@ TODO: Write usage instructions here
 6. Create new Pull Request
 
 ## Other similar projects
-* [https://github.com/dan-ding/people]People [https://github.com/mericson/people]Original
-* [https://github.com/berkmancenter/namae]Namae (Racc based token)
-* [https://github.com/chorn/nameable]Nameable
-* [https://github.com/matthijsgroen/person-name]Person-name
+* [People](https://github.com/dan-ding/people) [Original](https://github.com/mericson/people)
+* [Namae](https://github.com/berkmancenter/namae) (Racc based token)
+* [Nameable](https://github.com/chorn/nameable)
+* [Person-name](https://github.com/matthijsgroen/person-name)
 
