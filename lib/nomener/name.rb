@@ -8,7 +8,6 @@ module Nomener
     # Public: Create an instance!
     def initialize(name = '')
       @original = name
-      @original.freeze
     end
 
     # Public: get the name we were instantiated with
