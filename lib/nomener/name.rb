@@ -7,7 +7,7 @@ module Nomener
 
     # Public: Create an instance!
     def initialize(name = '')
-      @original = name
+      @original = name.kind_of?(String) ? name : ""
     end
 
     # Public: get the name we were instantiated with
