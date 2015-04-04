@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Nomener::VERSION
   spec.authors       = ["Dante Piombino"]
   spec.email         = ["dan-ding@users.noreply.github.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{A(nother)? human name parser in ruby.}
+  spec.description   = %q{A human name parser in ruby.}
+  spec.homepage      = "https://github.com/dan-ding/nomener"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -23,4 +23,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.5"
   spec.add_development_dependency "rake",  "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.2"
+  spec.add_development_dependency "simplecov", "~> 0.9"
 end
