@@ -3,18 +3,12 @@ require "nomener/parser"
 module Nomener
   class Name < Struct.new :title, :first, :middle, :nick, :last, :suffix
 
-    @original = ""
+    # we don't want to change what we were instantiated with
+    attr_reader :original
 
     # Public: Create an instance!
     def initialize(name = '')
-      @original = name.kind_of?(String) ? name : ""
-    end
-
-    # Public: get the name we were instantiated with
-    #
-    # Returns a string we were instantiated with
-    def original
-      @original
+      @original = (name.kind_of?(String) ? name : "")
     end
 
     # Public: Break down a string into parts of a persons name
@@ -33,7 +27,7 @@ module Nomener
     # Returns a string of the full name in a proper (western) case
     def properlike
       f = (first || "").capitalize
-      n = ("\"#{nick}\"" || "")
+      n = (nick.nil? || nick.empty?) ? "" : "\"#{nick}\""
       m = (middle || "").capitalize
       l = capit(last || "")
       t = (title || "").capitalize
@@ -51,10 +45,14 @@ module Nomener
       fix = last.dup
 
       # if there are multiple last names separated by spaces
-      fix = fix.split(" ").map { |v| v.capitalize || v }.join " "
+      fix = fix.split(" ").map { |v| v.capitalize }.join " "
 
       # if there are multiple last names separated by a dash
-      fix = fix.split("-").map { |v| v.capitalize || v }.join "-"
+      if !fix.index("-").nil?
+        fix = fix.split("-").map { |v|
+          v.split(" ").map { |w| w.capitalize }.join " "
+        }.join "-"
+      end
 
       # anything begining with Mac and not ending in [aciozj]
       if m = fix.match(/Mac([\p{Alpha}]{2,}[^aciozj])/i)
@@ -74,10 +72,8 @@ module Nomener
         end
       elsif m = fix.match(/Mc([\p{Alpha}]{2,})/i) # anything beginning with Mc
         fix.sub!(/Mc#{m[1]}/, "Mc#{m[1].capitalize}")
-      elsif fix.match(/Macmurdo/i) # exception of MacMurdo
-        fix = "MacMurdo"
       elsif fix.match(/'\p{Alpha}/) # names like D'Angelo or Van 't Hooft
-        fix.gsub!(/('\p{Alpha})/) { |s| (s[2] != 't') ? s.upcase : s } #no cap 't
+        fix.gsub!(/('\p{Alpha})/) { |s| (s[-1] != 't') ? s.upcase : s } #no cap 't
       end
 
       fix
@@ -87,7 +83,7 @@ module Nomener
     #
     # Returns a nicely formatted string
     def inspect
-      "#<Nomener::Name #{each_pair.map { |k,v| [k,v.inspect].join('=') if v }.compact.join(' ')}>"
+      "#<Nomener::Name #{each_pair.map { |k,v| [k,v.inspect].join('=') if (!v.nil? && !v.empty?) }.compact.join(' ')}>"
     end
 
     # Public: Make the full name as a string.
