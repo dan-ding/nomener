@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "nomener"
   spec.version       = Nomener::VERSION
   spec.authors       = ["Dante Piombino"]
-  spec.email         = ["dan-ding@users.noreply.github.com"]
+  spec.email         = ["not@amusing.ninja"]
   spec.summary       = %q{A(nother)? human name parser in ruby.}
   spec.description   = %q{A human name parser in ruby.}
   spec.homepage      = "https://github.com/dan-ding/nomener"

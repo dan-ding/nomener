@@ -2,6 +2,7 @@ require "nomener/name"
 require "nomener/titles"
 require "nomener/suffixes"
 require "nomener/compounders"
+require "nomener/helper"
 
 module Nomener
   class Parser
@@ -38,10 +39,7 @@ module Nomener
     def self.parse!(name, format = {:order => :fl, :spacelimit => 1})
       raise ArgumentError, 'Name to parse not provided' unless (name.kind_of?(String) && !name.empty?)
 
-      name.scrub! #remove illegal characters
-      name.gsub!(/[^\p{Alpha}\-\'\.&\/ \,\"]/, "") #what others are in a name
-      name.gsub!(/\p{Blank}+/, " ") #compress whitespace
-      name.strip! #trim space
+      name = Nomener::Helper.reformat(name)
 
       title = self.parse_title(name)
       suffix = self.parse_suffix(name)

@@ -8,7 +8,7 @@ module Nomener
 
     # Public: Create an instance!
     def initialize(nomen = '')
-      @original = (nomen.kind_of?(String) ? nomen : "")
+      @original = Nomener::Helper.reformat(nomen.kind_of?(String) ? nomen : "")
     end
 
     # Public: Break down a string into parts of a persons name
