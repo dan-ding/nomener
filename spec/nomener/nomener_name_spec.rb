@@ -63,11 +63,19 @@ RSpec.describe "Nomener::Name" do
     end
   end
 
+  context "with name" do
+    it "follows the format and returns 'Bob Bob Bob' from 'Bob Smith'" do
+      name = Nomener::Name.new("Bob Smith")
+      name.parse
+      expect(name.name("%f %f %f")).to eq "Bob Bob Bob"
+    end
+  end
+
   context "with full" do
     it "returns the entire parsed name as a string" do
-      name = Nomener::Name.new("Mr. Joe Smith")
+      name = Nomener::Name.new("Mr. Joe Bob Smith")
       name.parse
-      expect(name.full).to eq "Mr Joe Smith"
+      expect(name.full).to eq "Joe Bob Smith"
     end
   end
 

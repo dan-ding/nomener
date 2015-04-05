@@ -7,8 +7,8 @@ module Nomener
     attr_reader :original
 
     # Public: Create an instance!
-    def initialize(name = '')
-      @original = (name.kind_of?(String) ? name : "")
+    def initialize(nomen = '')
+      @original = (nomen.kind_of?(String) ? nomen : "")
     end
 
     # Public: Break down a string into parts of a persons name
@@ -86,17 +86,48 @@ module Nomener
       "#<Nomener::Name #{each_pair.map { |k,v| [k,v.inspect].join('=') if (!v.nil? && !v.empty?) }.compact.join(' ')}>"
     end
 
-    # Public: Make the full name as a string.
+    # Public: Make the name a string.
     #
-    # Returns the full name same case as the original
-    def full
-      n = (nick.nil? || nick.empty?) ? "" : "\"#{nick}\""
-      "#{title} #{first} #{n} #{middle} #{last} #{suffix}".gsub(/\p{Blank}+/, ' ').strip
+    # format - a string using symboles specifying the format of the name to return
+    #   defaults to "%f %l"
+    #     %f -> first name
+    #     %l -> last/surname/family name
+    #     %m -> middle name
+    #     %n -> nick name
+    #     %m -> middle name
+    #     %s -> suffix
+    #     %t -> title/prefix
+    #
+    # propercase - boolean on whether to (try to) fix the case of the name
+    #   defaults to true
+    #
+    # Returns the name as a string
+    def name(format = "%f %l", propercase = true)
+      nomen = to_h
+      nomen[:nick] = (nick.nil? || nick.empty?) ? "" : "\"#{nick}\""
+      format.gsub! /\%f/, '%{first}'
+      format.gsub! /\%l/, '%{last}'
+      format.gsub! /\%m/, '%{middle}'
+      format.gsub! /\%n/, '%{nick}'
+      format.gsub! /\%s/, '%{suffix}'
+      format.gsub! /\%t/, '%{title}'
+      (format % nomen).strip.gsub /\p{Blank}+/, " "
     end
 
-    # Public: See full
+    # Public: Shortcut for name format
+    #   can also be called by the method fullname
+    #
+    # Returns the full name
+    def full
+      name("%f %m %l")
+    end
+    alias :fullname :full
+
+    # Public: See name
+    #
+    # Returns the name as a string
     def to_s
-      full
+      name("%f %l")
     end
 
     # Internal: merge another Nomener::Name to this one
