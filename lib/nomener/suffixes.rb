@@ -13,7 +13,7 @@ module Nomener
       | DSC
       | Esq(?:\.|uire\.?)?                                # Esq, Esquire
       | FAC(?:P|S)                                        # FACP, FACS
-      | (?:X{0,3}I{0,3}(?:X|V)?I{0,3})[IXV]{1,}\.?       # roman numbers I - XXXXVIII, if they're written proper
+      | [(?:X{1,3})(?:IX|IV|V)(?:I{0,3})]{1,}\b      # roman numbers I - XXXXVIII, if they're written proper
       | Jn?r\.?
       | Junior
       | LLB
@@ -27,6 +27,7 @@ module Nomener
       | Sn?r\.?                                           # Snr, Sr
       | Senior
       | V\.?M\.?D\.?
-    )\b!xi
+    )!xi
   end
 end
+

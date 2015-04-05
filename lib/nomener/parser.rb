@@ -82,7 +82,10 @@ module Nomener
     def self.parse_suffix(nm)
       suffixes = []
       suffixes = nm.scan(SUFFIXES).flatten
-      suffixes.each { |s| nm.gsub!(/\b#{s}/, "").strip! }
+      suffixes.each { |s|
+        nm.gsub!(/#{s}/, "").strip!
+        s.strip!
+      }
       suffixes.join " "
     end
 
@@ -92,13 +95,13 @@ module Nomener
     #
     # Returns string of the nickname found or and empty string
     def self.parse_nick(nm)
-      nick = ''
-      if m = nm.match(/("[\p{Alpha}\-\ ']+")/)
-        nick = m[1].strip
-        nm.sub!(nick, "").strip!
-        nick.gsub!('"', ' ')
-      end
-      nick.strip
+      nicks = []
+      nicks = nm.scan(/([\(\"][\p{Alpha}\-\ ']+[\)\"])/).flatten
+      nicks.each { |n|
+        nm.gsub!(/#{n}/, "").strip!
+        n.gsub!(/["\(\)]/, ' ')
+      }
+      nicks.join(" ").strip
     end
 
     # Internal: parse last name from string
