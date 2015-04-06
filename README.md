@@ -1,4 +1,5 @@
 # Nomener
+[![Gem Version](https://badge.fury.io/rb/nomener.svg)](http://badge.fury.io/rb/nomener)
 
 Nomener assists with parsing peoples names that they give themselves (or other people). Nomener is a fork of [People](https://github.com/dan-ding/people) as it uses some code contributed there. It's currently geared towards western style name formatting, however other cultural name formatting is (or would like to be supported).Currently it attempts to parse names through pattern matching without using dictionary/library/data files (except for name decorations and suffixes, see usage). It may not be possible to do without such in all languages.
 
