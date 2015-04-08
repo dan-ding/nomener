@@ -2,7 +2,7 @@ module Nomener
   module Titles
     
     # Internal: Regex for matching name prefixes such as honorifics and other formalities
-    TITLES = %r!(
+    TITLES = %r!\b(
       خانم                                                        # Persian Mrs ?
       | (?:רעב|'ר)                                               # Yiddish Mr.
       | አቶ                                                      # Amharic Mr.
@@ -95,6 +95,6 @@ module Nomener
       | Sr(?:a|ta)?\.?
       | V\.?\ Revd?\.?
       | Very\ Rever[e|a]nd
-    )!xi
+    )\b!xi
   end
 end

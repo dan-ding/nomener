@@ -65,6 +65,7 @@ module Nomener
       | Vest
       | Väst
       | Väster
+      | wa
       | Zu
       | (?-i:y)
       | 't

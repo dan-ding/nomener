@@ -9,11 +9,13 @@ module Nomener
       | B[AS]c?                                           # Bachelor of Arts, Bachelor of Science
       | C\.?P\.?A\.?
       | CHB
+      | DBE
       | D\.?[DMOPV]\.?[SMD]?\.?                           # DMD, DO, DPM, DDM, DVM
       | DSC
       | Esq(?:\.|uire\.?)?                                # Esq, Esquire
       | FAC(?:P|S)                                        # FACP, FACS
       | fils
+      | FRSL
       | [(?:X{1,3})(?:IX|IV|V)(?:I{0,3})]{1,}\b      # roman numbers I - XXXXVIII, if they're written proper
       | Jn?r\.?
       | Junior
@@ -22,14 +24,14 @@ module Nomener
       | MPH
       | P\.?\p{Blank}?A\.?
       | PC
-      | père
+      | p[èe]re
       | Ph\.?\p{Blank}?D\.?
       | RN
       | SC
       | Sn?r\.?                                           # Snr, Sr
       | Senior
       | V\.?M\.?D\.?
-    )!xi
+    )!x
   end
 end
 
