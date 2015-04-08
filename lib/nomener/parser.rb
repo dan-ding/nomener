@@ -21,7 +21,7 @@ module Nomener
     #   :spacelimit - the number of spaces to consider in the first name
     #
     # Returns a Nomener::Name object hopefully a parsed name of the string or nil
-    def self.parse(name, format = {:order => :fl, :spacelimit => 0})
+    def self.parse(name, format = {:order => :auto, :spacelimit => 1})
       begin
         self.parse!(name, format)
       rescue
@@ -36,7 +36,7 @@ module Nomener
     #
     # Returns a hash of name parts or nil
     # Raises ArgumentError if 'name' is not a string or is empty
-    def self.parse!(name, format = {:order => :fl, :spacelimit => 1})
+    def self.parse!(name, format = {:order => :auto, :spacelimit => 0})
       raise ArgumentError, 'Name to parse not provided' unless (name.kind_of?(String) && !name.empty?)
 
       name = Nomener::Helper.reformat(name)
@@ -44,6 +44,8 @@ module Nomener
       title = self.parse_title(name)
       suffix = self.parse_suffix(name)
       nick = self.parse_nick(name)
+      # remove any trailing commas
+      name.gsub! /[,\s]+$/, ''
       last = self.parse_last(name, format[:order])
       first, middle = self.parse_first(name, format[:spacelimit])
 
@@ -108,16 +110,22 @@ module Nomener
     # format - symbol defaulting to "first last". See parse()
     #
     # Returns string of the last name found or an empty string
-    def self.parse_last(nm, format = :fl)
+    def self.parse_last(nm, format = :auto)
       last = ''
-      if format == :fl && n = nm.match(/\p{Blank}(?<fam>#{COMPOUNDS}[\p{L}\-\']+)\z/i)
-        last = n[:fam]
+
+      if format == :auto
+        format = :fl if nm.index(',').nil?
+        format = :lcf if !nm.index(',').nil?
+      end
+
+      if format == :fl && n = nm.match(/\b(?<fam>#{COMPOUNDS}\b?[\p{Alpha}\-\']+)\Z/i)
+        last = n[:fam].strip
         nm.sub!(last, "").strip!
-      elsif format == :lf && n = nm.match(/\A(?<fam>#{COMPOUNDS}[\p{Alpha}\-\']+)\p{Blank}/i)
-        last = n[:fam]
+      elsif format == :lf && n = nm.match(/\A(?<fam>#{COMPOUNDS}\b[\p{Alpha}\-\']+)\p{Blank}/i)
+        last = n[:fam].strip
         nm.sub!(last, "").strip!
-      elsif format == :lcf && n = nm.match(/\A(?<fam>#{COMPOUNDS}[\p{Alpha}\-\'\p{Blank}]+),/i)
-        last = n[:fam]
+      elsif format == :lcf && n = nm.match(/\A(?<fam>#{COMPOUNDS}\b[\p{Alpha}\-\'\p{Blank}]+),/i)
+        last = n[:fam].strip
         nm.sub!(last, "").strip!
         nm.sub!(',', "").strip!
       end
