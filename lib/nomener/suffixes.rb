@@ -13,6 +13,7 @@ module Nomener
       | DSC
       | Esq(?:\.|uire\.?)?                                # Esq, Esquire
       | FAC(?:P|S)                                        # FACP, FACS
+      | fils
       | [(?:X{1,3})(?:IX|IV|V)(?:I{0,3})]{1,}\b      # roman numbers I - XXXXVIII, if they're written proper
       | Jn?r\.?
       | Junior
@@ -21,6 +22,7 @@ module Nomener
       | MPH
       | P\.?\p{Blank}?A\.?
       | PC
+      | père
       | Ph\.?\p{Blank}?D\.?
       | RN
       | SC
