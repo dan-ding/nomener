@@ -581,6 +581,7 @@ RSpec.describe "The Guardian author list" do
       { from: "Emile Zola", to: { full: "Emile Zola", first: "Emile", last: "Zola" } }
       ].each do |name|
         it "parses #{name[:from]}" do
+          skip if name[:skip]
           parsed = Nomener.parse(name[:from])
           parse_hash = parsed.to_h
           parse_hash.each_pair do |k,v|

@@ -24,10 +24,10 @@ RSpec.describe "Nomener::Parser" do
 
     [
       {from: "Joe Smith", to: { first: "Joe", last: "Smith"} },
-      {from: "Joe Smith Jr.", to: { first: "Joe", last: "Smith", suffix: "Jr."} },
+      {from: "Joe Smith Jr.", to: { first: "Joe", last: "Smith", suffix: "Jr"} },
       {from: "Joe Van 't Hooft", to: { first: "Joe", last: "Van 't Hooft"} },
       {from: "Mr. Joe Smith", to: { title: "Mr", first: "Joe", last: "Smith"} },
-      {from: "Mr. Joe Smith Jr.", to: { title: "Mr", first: "Joe", last: "Smith", suffix:"Jr."} },
+      {from: "Mr. Joe Smith Jr.", to: { title: "Mr", first: "Joe", last: "Smith", suffix:"Jr"} },
       {from: "Mr. Joe Smith III", to: { title: "Mr", first: "Joe", last: "Smith", suffix:"III"} },
       {from: "Mr. Joe \"Spud\" Smith III", to: { title: "Mr", first: "Joe", last: "Smith", suffix: "III", nick: "Spud"} },
     ].each do |name|
@@ -47,7 +47,7 @@ RSpec.describe "Nomener::Parser" do
       {from: "Joe Smith", to: ""},
     ].each do |name|
       it "returns the title from #{name[:from]}" do
-        parsed = Nomener::Parser.parse_title(name[:from])
+        parsed = Nomener::Parser.parse_title!(name[:from])
         expect(parsed).to eq name[:to]
       end
     end
@@ -61,7 +61,7 @@ RSpec.describe "Nomener::Parser" do
       {from: "Joe Smith Jr. DMD", to: "Jr. DMD"},
     ].each do |name|
       it "returns the suffix from #{name[:from]}" do
-        parsed = Nomener::Parser.parse_suffix(name[:from])
+        parsed = Nomener::Parser.parse_suffix!(name[:from])
         expect(parsed).to eq name[:to]
       end
     end
@@ -74,7 +74,7 @@ RSpec.describe "Nomener::Parser" do
       {from: "Joe \"Spud\" Smith DMD", to: "Spud"},
     ].each do |name|
       it "returns the suffix from #{name[:from]}" do
-        parsed = Nomener::Parser.parse_nick(name[:from])
+        parsed = Nomener::Parser.parse_nick!(name[:from])
         expect(parsed).to eq name[:to]
       end
     end
@@ -88,7 +88,7 @@ RSpec.describe "Nomener::Parser" do
       {from: "Smith, Joe Jr.", to: "Smith", opts: :lcf},
     ].each do |name|
       it "returns the suffix from #{name[:from]}" do
-        parsed = Nomener::Parser.parse_last(name[:from], name[:opts])
+        parsed = Nomener::Parser.parse_last!(name[:from], name[:opts])
         expect(parsed).to eq name[:to]
       end
     end
@@ -101,7 +101,7 @@ RSpec.describe "Nomener::Parser" do
       { from: "Mary Sue", to: ["Mary Sue", ""], opts: 1 },
     ].each do |name|
       it "returns the first name #{name[:to][0]} from #{name[:from]}" do
-        parsed = Nomener::Parser.parse_first(name[:from], name[:opts])
+        parsed = Nomener::Parser.parse_first!(name[:from], name[:opts])
         expect(parsed).to eq name[:to]
       end
     end
