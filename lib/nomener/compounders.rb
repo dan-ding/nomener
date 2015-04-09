@@ -69,6 +69,6 @@ module Nomener
       | Zu
       | (?-i:y)
       | 't
-    )\p{Blank}\g<part>*)*!xi
+    )\p{Blank}?\g<part>*)*!xi
   end
 end
