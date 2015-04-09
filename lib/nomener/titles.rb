@@ -6,12 +6,14 @@ module Nomener
       خانم                                                        # Persian Mrs ?
       | (?:רעב|'ר)                                               # Yiddish Mr.
       | አቶ                                                      # Amharic Mr.
+      | Adi                                                     # Fiji
       | Air\p{Blank}(?:Commander|Commodore|Marshall)            # Air Commander, Commodore, Marshall
       | Ald(?:erman|\.)?
       | (?:Arch)?Du(?:ke|chess)                                 # Duke, Archduke, Duchess, Archduchess
       | Ato                                                     # Amharic Mr.
       | Baron(?:ess)?
       | Bishop
+      | Bulou                                                   # Fiji
       | Brig(?:adier)?
       | Brother
       | Capt(?:ain|\.)?
@@ -25,8 +27,9 @@ module Nomener
       | Dhr\.?
       | Doctor
       | Dr\.?
-      | Dona
-      | Do[mn]                                                  # Dom, Don
+#      | Dona                                                   # Always with first name
+#      | Do[mn]                                                 # Always with first name
+      | Dom
       | Erzherzog(?:in)?                                        # Erzherzog, Erzherzogin
       | Father
       | Field\p{Blank}Marshall
@@ -78,9 +81,11 @@ module Nomener
       | Pvt\.?                                                  # Private
       | PFC                                                     # Private first class
       | Rabbi
+      | Ratu                                                    # Fiji Sir
       | Reb\.?                                                  # Yiddish Mr.
       | Rever[e|a]nd
       | Revd?\.?
+      | Ro(?:ko)?                                               # Fiji
       | Se[nñ]h?orita                                           # senorita, señorita, senhorita
       | Se[nñ]h?ora                                             # senora, señora, senhora
       | Se[nñ][hy]?or(?:\p{Blank}Dom)?                          # senor, señor, senhor, senyor, senor dom
