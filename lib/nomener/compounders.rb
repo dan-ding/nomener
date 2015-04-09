@@ -1,5 +1,6 @@
 module Nomener
   module Compounders
+    # Many of these are from http://en.wikipedia.org/wiki/List_of_family_name_affixes
 
     # Internal: Regex last name prefixes.
     COMPOUNDS = %r!(?<part>(?:
@@ -10,7 +11,7 @@ module Nomener
       | Bar
       | Bath?
       | Bet
-      | Bint?
+      | Bint?             # Arabic
       | Da
       | De\p{Blank}Ca
       | De\p{Blank}La
@@ -30,17 +31,20 @@ module Nomener
       | in\p{Blank}het
       | Ibn
       | Kil
-      | L[aeo]
-      | M[ai\']?c?
+      | L[aeo]            # French, Italian
+      | M'
+      | M[ai]c
+      | Mc
       | Mhic
       | Maol
       | M[au]g
-      | Naka
-      | 中
-      | Neder
-      | N[ií]'?[cgn]?
-      | Nord
-      | Norr
+      | Naka              # Japanese
+      | 中                # Japanese
+      | Neder             # Swedish
+      | N[ií]'?[cg]?      # Irish, Scottish
+      | Nin               # Serbian
+      | Nord              # German, Swedish, Danish, Norwegian
+      | Norr              # German, Swedish, Danish, Norwegian
       | Ny
       | Ó
       | Øst
