@@ -25,7 +25,7 @@ module Nomener
       n.tr!("\u0027\u2019\u201B\u2032\u203A\u300D\uFE42\uFF62", right) # replace left single quotes
 
       n.gsub!(/\./, ' ')
-      n.gsub!(/[^\p{Alpha}\-&\/ \,\'\"#{leftleft}#{rightright}#{left}#{right}]/, "") # what others may be in a name?
+      n.gsub!(/[^\p{Alpha}\-&\/ \,\'\"#{leftleft}#{rightright}#{left}#{right}\(\)]/, "") # what others may be in a name?
       n.gsub!(/\p{Blank}+/, " ") # compress whitespace
       n.strip! # trim space
 
