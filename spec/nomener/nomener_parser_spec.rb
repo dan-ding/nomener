@@ -58,7 +58,7 @@ RSpec.describe "Nomener::Parser" do
       {from: "Mr. Joe Smith I", to: "I"},
       {from: "Joe Smith II", to: "II"},
       {from: "Joe Smith DMD", to: "DMD"},
-      {from: "Joe Smith Jr. DMD", to: "Jr. DMD"},
+      {from: "Joe Smith Jr. DMD", to: "Jr DMD"},
     ].each do |name|
       it "returns the suffix from #{name[:from]}" do
         parsed = Nomener::Parser.parse_suffix!(name[:from])
