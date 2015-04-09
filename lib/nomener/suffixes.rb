@@ -16,7 +16,9 @@ module Nomener
       | FAC(?:P|S)                                        # FACP, FACS
       | fils
       | FRSL
-      | [(?:X{1,3})(?:IX|IV|V)(?:I{0,3})]{1,}\b      # roman numbers I - XXXXVIII, if they're written proper
+      | [VX]?I{1,3}                                       # roman numbers
+      | IX|IV|V|VI|XI                                     # roman numbers
+      | X{1,3}                                            # roman numbers
       | Jn?r\.?
       | Junior
       | LLB
@@ -31,7 +33,7 @@ module Nomener
       | Sn?r\.?                                           # Snr, Sr
       | Senior
       | V\.?M\.?D\.?
-    )!x
+    )\b!x
   end
 end
 
