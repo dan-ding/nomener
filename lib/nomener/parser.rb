@@ -47,7 +47,7 @@ module Nomener
 
       # grab any suffix' we can find
       suffix = parse_suffix!(name)
-      first = last = mittle = ""
+      first = last = middle = ""
 
       # if there's a comma, it may be a useful hint
       if !name.index(',').nil? # && (format[:order] == :auto || format[:order] == :lcf)
@@ -69,7 +69,7 @@ module Nomener
             end
           end
           # titles are part of the first name
-          
+          title = parse_title!(first) if title.nil? || title.empty?
         else
           raise ParseError "Could not understand #{rename}"
         end
@@ -92,8 +92,14 @@ module Nomener
       }
     end
 
+    # Internal: Clean up a string where there are numerous consecutive and trailing non-name characters.
+    #   Modifies given string in place.
+    #
+    # dirty - string to clean up
+    #
+    # Returns nothing
     def self.cleanup!(dirty)
-      dirty.gsub! /[^,\p{Alpha}]{2,}/, ''
+      dirty.gsub! /[^,'\p{Alpha}]{2,}/, ''
       dirty.squeeze! " "
       # remove any trailing commas or whitespace
       dirty.gsub! /[,|\s]+$/, ''
@@ -101,6 +107,7 @@ module Nomener
     end
 
     # Internal: pull off a title if we can
+    #   Modifies given string in place.
     #
     # nm - string of the name to parse
     #
@@ -116,6 +123,7 @@ module Nomener
     end
 
     # Internal: pull off what suffixes we can
+    #   Modifies given string in place.
     #
     # nm - string of the name to parse
     #
@@ -131,6 +139,7 @@ module Nomener
     end
 
     # Internal: parse nickname out of string. presuming it's in quotes
+    #   Modifies given string in place.
     #
     # nm - string of the name to parse
     #
@@ -144,6 +153,7 @@ module Nomener
     end
 
     # Internal: parse last name from string
+    #   Modifies given string in place.
     #
     # nm - string to get the last name from
     # format - symbol defaulting to "first last". See parse()
@@ -172,6 +182,7 @@ module Nomener
     end
 
     # Internal: parse the first name, and middle name if any
+    #   Modifies given string in place.
     #
     # nm - the string to get the first name from
     # namecount - the number of spaces in the first name to consider
