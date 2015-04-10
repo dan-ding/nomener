@@ -2,7 +2,7 @@ module Nomener
   module Suffixes
 
     # Internal: Regex to match suffixes or honorifics after names
-    SUFFIXES  = %r!\b(?:
+    SUFFIXES  = %r/\b(?:
       AB                                                  # Bachelor of Arts
       | APC
       | Attorney[\p{Blank}\-]at[\p{Blank}\-]Law\.?        # Attorney at Law, Attorney-at-Law
@@ -16,9 +16,9 @@ module Nomener
       | FAC(?:P|S)                                        # FACP, FACS
       | fils
       | FRSL
-      | [VX]?I{1,3}                                       # roman numbers
-      | IX|IV|V|VI|XI                                     # roman numbers
-      | X{1,3}                                            # roman numbers
+      | (?:[VX]?I{1,3})(?!\.)                             # roman numbers
+      | (?:IX|IV|V|VI|XI)(?!\.)                           # roman numbers
+      | (?:X{1,3})(?!\.)                                  # roman numbers
       | Jn?r\.?
       | Junior
       | LLB
@@ -33,7 +33,7 @@ module Nomener
       | Sn?r\.?                                           # Snr, Sr
       | Senior
       | V\.?M\.?D\.?
-    )\b!x
+    )\b/x
   end
 end
 

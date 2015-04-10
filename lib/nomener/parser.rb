@@ -43,15 +43,28 @@ module Nomener
 
       # grab any identified nickname before working on the rest
       nick = parse_nick!(name)
+      nick.gsub!(/\./, ' ')
+      nick.squeeze! " "
+      nick.strip!
       title = parse_title!(name)
-
+      title.gsub!(/\./, ' ')
+      title.squeeze! " "
+      title.strip!
       # grab any suffix' we can find
       suffix = parse_suffix!(name)
+      suffix.gsub!(/\./, ' ')
+      suffix.squeeze! " "
+      suffix.strip!
+      name.gsub!(/\./, ' ')
+      name.squeeze! " "
+      name.strip!
       first = last = middle = ""
 
       # if there's a comma, it may be a useful hint
       if !name.index(',').nil? # && (format[:order] == :auto || format[:order] == :lcf)
         clues = name.split(",")
+        clues.each { |i| i.strip! }
+
         # convention is last, first
         if clues.length == 2
           last, first = clues
@@ -77,7 +90,8 @@ module Nomener
         last = parse_last!(name, format[:order])
         first, middle = parse_first!(name, format[:spacelimit])
       elsif name.index(" ").nil?
-        first = name[0] # mononym
+        last = name # possibly mononym
+        first = ""
       else
         raise ParseError "Could not understand #{rename}"
       end
@@ -99,7 +113,7 @@ module Nomener
     #
     # Returns nothing
     def self.cleanup!(dirty)
-      dirty.gsub! /[^,'\p{Alpha}]{2,}/, ''
+      dirty.gsub! /[^,'\.\p{Alpha}]{2,}/, ''
       dirty.squeeze! " "
       # remove any trailing commas or whitespace
       dirty.gsub! /[,|\s]+$/, ''
@@ -145,7 +159,8 @@ module Nomener
     #
     # Returns string of the nickname found or and empty string
     def self.parse_nick!(nm)
-      nm.sub!(/(?<=["'\(])([\p{Alpha}\-\ ']+?)(?=["'\)])/, '')
+      nick = ""
+      nm.sub!(/(?<=["'\(])([\p{Alpha}\-\ '\.\,]+?)(?=["'\)])/, '')
       nick = $1.strip unless $1.nil?
       nm.sub! /["'\(\)]{2}/, ''
       nm.squeeze! " "
