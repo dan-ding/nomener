@@ -4,6 +4,8 @@ require "nomener/parser"
 
 module Nomener
 
+  class ParseError < StandardError; end
+  
   # Public: Convenience method to parse a name
   #
   # name - a string of a name to parse

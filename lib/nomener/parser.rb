@@ -39,25 +39,23 @@ module Nomener
     def self.parse!(name, format = {:order => :auto, :spacelimit => 0})
       raise ArgumentError, 'Name to parse not provided' unless (name.kind_of?(String) && !name.empty?)
 
-      name = Nomener::Helper.reformat(name)
+      name = Nomener::Helper.reformat name
 
       # grab any identified nickname before working on the rest
-      nick = parse_nick!(name)
-      nick.gsub!(/\./, ' ')
-      nick.squeeze! " "
-      nick.strip!
-      title = parse_title!(name)
-      title.gsub!(/\./, ' ')
-      title.squeeze! " "
-      title.strip!
+      nick = parse_nick! name
+      cleanup! name
+
+      title = parse_title! name
+      cleanup! name
+
       # grab any suffix' we can find
-      suffix = parse_suffix!(name)
-      suffix.gsub!(/\./, ' ')
-      suffix.squeeze! " "
-      suffix.strip!
-      name.gsub!(/\./, ' ')
+      suffix = parse_suffix! name
+      cleanup! name
+
+      name.gsub! /\./, ' '
       name.squeeze! " "
       name.strip!
+
       first = last = middle = ""
 
       # if there's a comma, it may be a useful hint
@@ -83,17 +81,17 @@ module Nomener
           end
           # titles are part of the first name
           title = parse_title!(first) if title.nil? || title.empty?
+        elsif clues.length == 1
+          last = clues.shift
         else
-          raise ParseError "Could not understand #{rename}"
+          raise ParseError, "Could not decipher commas in \"#{name}\""
         end
       elsif !name.index(" ").nil?
         last = parse_last!(name, format[:order])
         first, middle = parse_first!(name, format[:spacelimit])
-      elsif name.index(" ").nil?
+      else
         last = name # possibly mononym
         first = ""
-      else
-        raise ParseError "Could not understand #{rename}"
       end
 
       {
@@ -132,8 +130,11 @@ module Nomener
         titles << title.strip
         ''
       end
-      cleanup!(nm)
-      titles.join " "
+      t = titles.join " "
+      t.gsub! /\./, ' '
+      t.squeeze! " "
+      t.strip!
+      t
     end
 
     # Internal: pull off what suffixes we can
@@ -148,8 +149,11 @@ module Nomener
         suffixes << suffix.strip
         ''
       end
-      cleanup!(nm)
-      suffixes.join " "
+      s = suffixes.join " "
+      s.gsub! /\./, ' '
+      s.squeeze! " "
+      s.strip!
+      s
     end
 
     # Internal: parse nickname out of string. presuming it's in quotes
@@ -164,7 +168,10 @@ module Nomener
       nick = $1.strip unless $1.nil?
       nm.sub! /["'\(\)]{2}/, ''
       nm.squeeze! " "
-      nick || ""
+      nick.gsub! /\./, ' '
+      nick.squeeze! " "
+      nick.strip!
+      nick
     end
 
     # Internal: parse last name from string

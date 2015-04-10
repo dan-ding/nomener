@@ -22,6 +22,12 @@ RSpec.describe "Nomener::Parser" do
       expect(name).to be_a Nomener::Name
     end
 
+    it "throw ParseError when passed too many commas" do
+      expect {
+        Nomener::Parser.parse!("Joe, John, Smith")
+      }.to raise_error Nomener::ParseError
+    end
+
     [
       {from: "Joe Smith", to: { first: "Joe", last: "Smith"} },
       {from: "Joe Smith Jr.", to: { first: "Joe", last: "Smith", suffix: "Jr"} },
