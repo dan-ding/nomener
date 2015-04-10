@@ -5,7 +5,8 @@ RSpec.describe "Title" do
     [
       { name: "خانم Augusta Ada King", result: "خانم" },
       { name: "רעב Bertrand Russell", result: "רעב" },
-      { skip: true, name: "'ר Bertrand Russell", result: "'ר" },
+      { skip: "Something is typed, or we clean it, improperly",
+        name: "'ר Bertrand Russell", result: "'ר" },
       { name: "አቶ Bertrand Russell", result: "አቶ" },
       { name: "Air Commander Bertrand Russell", result: "Air Commander" },
       { name: "Air Commodore Bertrand Russell", result: "Air Commodore" },
@@ -44,8 +45,8 @@ RSpec.describe "Title" do
       { name: "Dr Bertrand Russell", result: "Dr" },
       { name: "Dr. Bertrand Russell", result: "Dr" },
       { name: "Dom Bertrand Russell", result: "Dom" },
-      { skip: true, name: "Don Bertrand Russell", result: "Don" },
-      { skip: true, name: "Dona Augusta Ada King", result: "Dona" },
+#      { name: "Don Bertrand Russell", result: "Don" },
+#      { name: "Dona Augusta Ada King", result: "Dona" },
       { name: "Erzherzog Bertrand Russell", result: "Erzherzog" },
       { name: "Erzherzogin Augusta Ada King", result: "Erzherzogin" },
       { name: "Father Bertrand Russell", result: "Father" },
@@ -215,7 +216,7 @@ RSpec.describe "Title" do
       { name: "Very Reverand Bertrand Russell", result: "Very Reverand" },
     ].each do |name|
       it "parses #{name[:result]} from #{name[:name]}" do
-        skip if name[:skip]
+        skip name[:skip] if name.has_key?(:skip)
         parsed = Nomener.parse(name[:name])
         expect(parsed.title).to eq name[:result]
       end

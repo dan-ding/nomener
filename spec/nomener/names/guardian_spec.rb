@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 # from http://www.theguardian.com/books/list/authorsaz
-# { from: "Brooke Magnanti (Belle de Jour)", to: { full: "Brooke Magnanti (Belle de Jour)", first: "Brooke Magnanti (Belle de", last: "Jour)" } },
 # { from: "Saki (Hector Hugh Munro)", to: { full: "Saki (Hector Hugh Munro)", first: "Saki (Hector Hugh", last: "Munro)" } },
 # { from: "Steven D Levitt and Stephen J Dubner", to: { full: "Steven D Levitt and Stephen J Dubner", first: "Steven D Levitt and Stephen J", last: "Dubner" } },
 
@@ -87,7 +86,7 @@ RSpec.describe "The Guardian author list" do
       { from: "Robert Burns", to: { full: "Robert Burns", first: "Robert", last: "Burns" } },
       { from: "William Burroughs", to: { full: "William Burroughs", first: "William", last: "Burroughs" } },
       { from: "AS Byatt", to: { full: "AS Byatt", first: "AS", last: "Byatt" } },
-      { skip: true, from: "Lord Byron", to: { full: "Lord Byron", first: "Lord", last: "Byron" } },
+      { from: "Lord Byron", to: { full: "Lord Byron", title: "Lord", last: "Byron" } },
 
       { from: "Carmen Callil", to: { full: "Carmen Callil", first: "Carmen", last: "Callil" } },
       { from: "Italo Calvino", to: { full: "Italo Calvino", first: "Italo", last: "Calvino" } },
@@ -144,7 +143,7 @@ RSpec.describe "The Guardian author list" do
       { from: "Edmund de Waal", to: { full: "Edmund de Waal", first: "Edmund", last: "de Waal" } },
       { from: "Daniel Defoe", to: { full: "Daniel Defoe", first: "Daniel", last: "Defoe" } },
       { from: "Len Deighton", to: { full: "Len Deighton", first: "Len", last: "Deighton" } },
-      { skip: true, from: "Don DeLillo", to: { full: "Don DeLillo", first: "Don", last: "DeLillo" } },
+      { from: "Don DeLillo", to: { full: "Don DeLillo", first: "Don", last: "DeLillo" } },
       { from: "Patrick DeWitt", to: { full: "Patrick DeWitt", first: "Patrick", last: "DeWitt" } },
       { from: "Giuseppe Tomasi di Lampedusa", to: { full: "Giuseppe Tomasi di Lampedusa", first: "Giuseppe Tomasi", last: "di Lampedusa" } },
       { from: "Junot Diaz", to: { full: "Junot Diaz", first: "Junot", last: "Diaz" } },
@@ -152,7 +151,7 @@ RSpec.describe "The Guardian author list" do
       { from: "Dick King-Smith", to: { full: "Dick King-Smith", first: "Dick", last: "King-Smith" } },
       { from: "Charles Dickens", to: { full: "Charles Dickens", first: "Charles", last: "Dickens" } },
       { from: "Emily Dickinson", to: { full: "Emily Dickinson", first: "Emily", last: "Dickinson" } },
-      { skip: true, from: "Don Paterson", to: { full: "Don Paterson", first: "Don", last: "Paterson" } },
+      { from: "Don Paterson", to: { full: "Don Paterson", first: "Don", last: "Paterson" } },
       { from: "Emma Donoghue", to: { full: "Emma Donoghue", first: "Emma", last: "Donoghue" } },
       { from: "Fyodor Dostoevsky", to: { full: "Fyodor Dostoevsky", first: "Fyodor", last: "Dostoevsky" } },
       { from: "Roddy Doyle", to: { full: "Roddy Doyle", first: "Roddy", last: "Doyle" } },
@@ -338,6 +337,7 @@ RSpec.describe "The Guardian author list" do
       { from: "Richard Mabey", to: { full: "Richard Mabey", first: "Richard", last: "Mabey" } },
       { from: "George MacDonald Fraser", to: { full: "George MacDonald Fraser", first: "George MacDonald", last: "Fraser" } },
       { from: "Madeline Miller", to: { full: "Madeline Miller", first: "Madeline", last: "Miller" } },
+      { from: "Brooke Magnanti (Belle de Jour)", to: { full: "Brooke (Belle de Jour) Magnanti", first: "Brooke", last: "Magnanti", nick: "Belle de Jour" } },
       { from: "Maggie Gee", to: { full: "Maggie Gee", first: "Maggie", last: "Gee" } },
       { from: "Maile Chapman", to: { full: "Maile Chapman", first: "Maile", last: "Chapman" } },
       { from: "Andrei Makine", to: { full: "Andrei Makine", first: "Andrei", last: "Makine" } },
@@ -484,7 +484,8 @@ RSpec.describe "The Guardian author list" do
       { from: "WG Sebald", to: { full: "WG Sebald", first: "WG", last: "Sebald" } },
       { from: "Will Self", to: { full: "Will Self", first: "Will", last: "Self" } },
       { from: "Maurice Sendak", to: { full: "Maurice Sendak", first: "Maurice", last: "Sendak" } },
-      { skip: true, from: "Dr Seuss", to: { full: "Dr Seuss", title: "Dr", last: "Seuss" } },
+      { skip: "Not sure what to do with this",
+        from: "Dr Seuss", to: { full: "Dr Seuss", title: "Dr", last: "Seuss" } },
       { from: "William Shakespeare", to: { full: "William Shakespeare", first: "William", last: "Shakespeare" } },
       { from: "Shaun Tan", to: { full: "Shaun Tan", first: "Shaun", last: "Tan" } },
       { from: "Mary Shelley", to: { full: "Mary Shelley", first: "Mary", last: "Shelley" } },
@@ -581,7 +582,7 @@ RSpec.describe "The Guardian author list" do
       { from: "Emile Zola", to: { full: "Emile Zola", first: "Emile", last: "Zola" } }
       ].each do |name|
         it "parses #{name[:from]}" do
-          skip if name[:skip]
+          skip name[:skip] if name.has_key?(:skip)
           parsed = Nomener.parse(name[:from])
           parse_hash = parsed.to_h
           parse_hash.each_pair do |k,v|
