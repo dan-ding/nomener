@@ -10,6 +10,30 @@ module Nomener
     include Nomener::Suffixes
     include Nomener::Compounders
 
+    # regex for stuff at the end we want to get out
+    TRAILER_TRASH = /[,|\s]+$/
+
+    # regex for name characters we aren't going to use
+    DIRTY_STUFF = /[^,'(?:\p{Alpha}(?<\.))\p{Alpha}]{2,}/
+
+    # regex for boundaries we'll use to find leftover nickname boundaries
+    NICKNAME_LEFTOVER = /["'\(\)]{2}/
+
+    # regex for matching enclosed nicknames
+    NICKNAME = /(?<=["'\(])([\p{Alpha}\-\ '\.\,]+?)(?=["'\)])/
+
+    # regex for matching last names in a "first last" pattern
+    FIRSTLAST_MATCHER = /\p{Blank}(?<fam>#{COMPOUNDS}[\p{Alpha}\-\']+)\Z/i
+
+    # regex for matching last names in a "last first" pattern
+    LASTFIRST_MATCHER = /\A(?<fam>#{COMPOUNDS}\b[\p{Alpha}\-\']+)\p{Blank}/i
+
+    # regex for matching last names in a "last, first" pattern
+    LASTCOMFIRST_MATCHER = /\A(?<fam>#{COMPOUNDS}\b[\p{Alpha}\-\'\p{Blank}]+),/i
+
+    # period. probably not much performance help.
+    PERIOD = /\./
+
     # Public: parse a string into name parts
     #
     # name - a string to get the name from
@@ -45,14 +69,14 @@ module Nomener
       nick = parse_nick! name
       cleanup! name
 
-      title = parse_title! name
-      cleanup! name
-
       # grab any suffix' we can find
       suffix = parse_suffix! name
       cleanup! name
 
-      name.gsub! /\./, ' '
+      title = parse_title! name
+      cleanup! name
+
+      name.gsub! PERIOD, ' '
       name.squeeze! " "
       name.strip!
 
@@ -111,10 +135,10 @@ module Nomener
     #
     # Returns nothing
     def self.cleanup!(dirty)
-      dirty.gsub! /[^,'\.\p{Alpha}]{2,}/, ''
+      dirty.gsub! DIRTY_STUFF, ''
       dirty.squeeze! " "
       # remove any trailing commas or whitespace
-      dirty.gsub! /[,|\s]+$/, ''
+      dirty.gsub! TRAILER_TRASH, ''
       dirty.strip!
     end
 
@@ -131,7 +155,7 @@ module Nomener
         ''
       end
       t = titles.join " "
-      t.gsub! /\./, ' '
+      t.gsub! PERIOD, ' '
       t.squeeze! " "
       t.strip!
       t
@@ -164,9 +188,9 @@ module Nomener
     # Returns string of the nickname found or and empty string
     def self.parse_nick!(nm)
       nick = ""
-      nm.sub!(/(?<=["'\(])([\p{Alpha}\-\ '\.\,]+?)(?=["'\)])/, '')
+      nm.sub! NICKNAME, ''
       nick = $1.strip unless $1.nil?
-      nm.sub! /["'\(\)]{2}/, ''
+      nm.sub! NICKNAME_LEFTOVER, ''
       nm.squeeze! " "
       nick.gsub! /\./, ' '
       nick.squeeze! " "
@@ -189,13 +213,13 @@ module Nomener
       #  format = :lcf if !nm.index(',').nil?
       end
 
-      if format == :fl && n = nm.match(/\p{Blank}(?<fam>#{COMPOUNDS}[\p{Alpha}\-\']+)\Z/i)
+      if format == :fl && n = nm.match( FIRSTLAST_MATCHER )
         last = n[:fam].strip
         nm.sub!(last, "").strip!
-      elsif format == :lf && n = nm.match(/\A(?<fam>#{COMPOUNDS}\b[\p{Alpha}\-\']+)\p{Blank}/i)
+      elsif format == :lf && n = nm.match( LASTFIRST_MATCHER )
         last = n[:fam].strip
         nm.sub!(last, "").strip!
-      elsif format == :lcf && n = nm.match(/\A(?<fam>#{COMPOUNDS}\b[\p{Alpha}\-\'\p{Blank}]+),/i)
+      elsif format == :lcf && n = nm.match( LASTCOMFIRST_MATCHER )
         last = n[:fam].strip
         nm.sub!(last, "").strip!
         nm.sub!(',', "").strip!
