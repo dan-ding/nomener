@@ -1,3 +1,4 @@
+#-- encoding: UTF-8
 require 'spec_helper'
 # lots of names from wikiquote http://simple.wikiquote.org/wiki/List_of_people_by_name
 # minimal changes

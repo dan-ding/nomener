@@ -1,3 +1,4 @@
+#-- encoding: UTF-8
 require "nomener/version"
 require "nomener/name"
 require "nomener/parser"

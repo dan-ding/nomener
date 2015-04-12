@@ -1,3 +1,4 @@
+#-- encoding: UTF-8
 require "nomener/name"
 require "nomener/titles"
 require "nomener/suffixes"

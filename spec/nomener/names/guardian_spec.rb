@@ -1,3 +1,4 @@
+#-- encoding: UTF-8
 require 'spec_helper'
 
 # from http://www.theguardian.com/books/list/authorsaz

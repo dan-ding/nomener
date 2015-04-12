@@ -1,3 +1,4 @@
+#-- encoding: UTF-8
 module Nomener
   module Compounders
     # Many of these are from http://en.wikipedia.org/wiki/List_of_family_name_affixes
