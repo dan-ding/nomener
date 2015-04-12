@@ -1,14 +1,14 @@
 # Nomener
 [![Gem Version](https://badge.fury.io/rb/nomener.svg)](http://badge.fury.io/rb/nomener)
 
-Nomener assists with parsing peoples names that they give themselves (or other people). Nomener is a fork of [People](https://github.com/dan-ding/people) as it uses some code contributed there. It's currently geared towards western style name formatting, however other cultural name formatting is (or would like to be supported).Currently it attempts to parse names through pattern matching without using dictionary/library/data files (except for name decorations and suffixes, see usage). It may not be possible to do without such in all languages.
+Nomener assists with parsing peoples names that they give themselves (or other people). Nomener ~~is~~ was a fork of [People](https://github.com/dan-ding/people) as it uses some code contributed there. It's currently geared towards western style name formatting, however other cultural name formatting is (or would like to be supported). Currently it attempts to parse names through pattern matching without using large(r) dictionary/library/data files (except for name decorations and suffixes, see usage). It may not be possible to do without such in all languages.
 
 If you didn't know, parsing names can be much more difficult than it seems it should be.
 
 ## Requirements
 
-Requires Ruby 2.1 or higher (or equivalent).
-To use with 1.9 or 2.0 you'll need to install either [https://github.com/hsbt/string-scrub](string-scrub) or [https://github.com/jrochkind/scrub_rb](scrub_rb).
+Requires Ruby 1.9.3 or higher (or equivalent).
+If using Ruby 1.9.3 or 2.0.0, it depends on [string-scrub](https://github.com/hsbt/string-scrub)
 
 ## Installation
 
@@ -33,11 +33,16 @@ name = Nomener.parse "Joe Smith" # <Nomener::Name first="Joe" last="Smith">
 
 Create a new instance:
 ```ruby
-name = Nomener::Name.new "Joe Smith" # <Nomener::Name >
-name.parse                           # <Nomener::Name first="Joe" last="Smith">
+name = Nomener::Name.new "Duke Joe (Henry) Smith Jr."
+ # name is <Nomener::Name title="Duke" first="Joe" nick="Henry" last="Smith" suffix="Jr">
+
 name.first                           # Joe
 name.name                            # Joe Smith
 "Hi #{name}!"                        # Hi Joe Smith!
+name.last                            # Smith
+name.title                           # "Duke"
+name.suffix                          # "Jr"
+name.nick                            # "Henry"
 ```
 
 ## TODO
