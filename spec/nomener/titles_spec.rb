@@ -217,8 +217,8 @@ RSpec.describe "Title" do
     ].each do |name|
       it "parses #{name[:result]} from #{name[:name]}" do
         skip name[:skip] if name.has_key?(:skip)
-        parsed = Nomener.parse(name[:name])
-        expect(parsed.title).to eq name[:result]
+        parsed = Nomener::Parser.parse_title!(name[:name])
+        expect(parsed).to eq name[:result]
       end
     end
 

@@ -8,10 +8,15 @@ module Nomener
 
     # Public: Create an instance!
     def initialize(nomen = '')
-      @original = Nomener::Helper.reformat(nomen.kind_of?(String) ? nomen : "")
+      @original = ""
+      if nomen.kind_of?(String)
+        @original = Nomener::Helper.reformat nomen
+        parse
+      end
     end
 
     # Public: Break down a string into parts of a persons name
+    #   As of 0.2.5 parse no longer needs to be called after initialization, it's done automatically.
     #
     # name - A string of name to parse
     #
@@ -84,6 +89,21 @@ module Nomener
     # Returns a nicely formatted string
     def inspect
       "#<Nomener::Name #{each_pair.map { |k,v| [k,v.inspect].join('=') if (!v.nil? && !v.empty?) }.compact.join(' ')}>"
+    end
+
+    # Public: an alias for the last name
+    #
+    # Returns a string of the last name
+    def surname
+      last
+    end
+    alias :family :surname
+
+    # Public: Return the first name
+    #
+    # Returns a string of the first name
+    def given
+      first
     end
 
     # Public: Make the name a string.

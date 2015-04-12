@@ -7,7 +7,7 @@ RSpec.describe "Nomener::Name" do
       name = Nomener::Name.new("Joe Smith")
       expect(name).to be_a Nomener::Name
       expect(name.original).to eq "Joe Smith"
-      expect(name.values.delete_if {|i| i.nil? || i.empty? }).to eq []
+      expect(name.name).to eq "Joe Smith"
     end
 
     it "an empty Nomener::Name when given a non-string" do
@@ -35,7 +35,6 @@ RSpec.describe "Nomener::Name" do
   context "with parse" do
     it "it parses 'Joe Smith'" do
       name = Nomener::Name.new("Joe Smith")
-      name.parse
       expect(name.first).to eq "Joe"
       expect(name.last).to eq "Smith"
     end
@@ -44,7 +43,6 @@ RSpec.describe "Nomener::Name" do
   context "with properlike" do
     it "returns the name in a nice case" do
       name = Nomener::Name.new("joE SmItH")
-      name.parse
       expect(name.properlike).to eq "Joe Smith"
     end
   end
@@ -52,13 +50,11 @@ RSpec.describe "Nomener::Name" do
   context "with to_s" do
     it "returns the name in a original case" do
       name = Nomener::Name.new("joE SmItH")
-      name.parse
       expect(name.to_s).to eq "joE SmItH"
     end
 
     it "can be used in a string" do
       name = Nomener::Name.new("Joe Smith")
-      name.parse
       expect("Hello #{name}!").to eq "Hello Joe Smith!"
     end
   end
@@ -66,7 +62,6 @@ RSpec.describe "Nomener::Name" do
   context "with name" do
     it "follows the format and returns 'Bob Bob Bob' from 'Bob Smith'" do
       name = Nomener::Name.new("Bob Smith")
-      name.parse
       expect(name.name("%f %f %f")).to eq "Bob Bob Bob"
     end
   end
@@ -74,7 +69,6 @@ RSpec.describe "Nomener::Name" do
   context "with full" do
     it "returns the entire parsed name as a string" do
       name = Nomener::Name.new("Mr. Joe Bob Smith")
-      name.parse
       expect(name.full).to eq "Joe Bob Smith"
     end
   end
@@ -82,7 +76,6 @@ RSpec.describe "Nomener::Name" do
   context "with inspect" do
     it "details the object with only the parsed strings" do
       name = Nomener::Name.new("Mr. Joe Smith")
-      name.parse
       expect(name.inspect).to eq '#<Nomener::Name title="Mr" first="Joe" last="Smith">'
     end
   end

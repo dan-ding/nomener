@@ -589,6 +589,11 @@ RSpec.describe "The Guardian author list" do
               expect(v).to eq(name[:to][k]), "got from #{k} - #{v} not #{name[:to][k]}"
             end
           end
+          name[:to].each_pair do |k,v|
+            unless (k == :full)
+              expect(v).to eq(parse_hash[k]), "got from #{k} - #{v} wanted #{parse_hash[k]} #{parse_hash}"
+            end
+          end
         end
       end
 
