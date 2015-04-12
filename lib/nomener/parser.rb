@@ -69,6 +69,7 @@ module Nomener
 
       # grab any identified nickname before working on the rest
       newname[:nick] = parse_nick! name
+      name.sub! NICKNAME_LEFTOVER, ""
       cleanup! name
 
       # grab any suffix' we can find
@@ -123,12 +124,7 @@ module Nomener
     #
     # Returns string of the title found or and empty string
     def self.parse_title!(nm)
-      titles = []
-      nm.gsub! TITLES do |title|
-        titles << title.strip
-        ""
-      end
-      dustoff titles.join(" ")
+      dustoff gut!(nm, TITLES)
     end
 
     # Internal: pull off what suffixes we can
@@ -138,12 +134,7 @@ module Nomener
     #
     # Returns string of the suffixes found or and empty string
     def self.parse_suffix!(nm)
-      suffixes = []
-      nm.gsub! SUFFIXES do |suffix|
-        suffixes << suffix.strip
-        ""
-      end
-      dustoff suffixes.join(" ")
+      dustoff gut!(nm, SUFFIXES)
     end
 
     # Internal: parse nickname out of string. presuming it's in quotes
@@ -153,13 +144,7 @@ module Nomener
     #
     # Returns string of the nickname found or and empty string
     def self.parse_nick!(nm)
-      nick = ""
-      nm.sub! NICKNAME do |z|
-        nick = $1.strip
-        ""
-      end
-      nm.sub! NICKNAME_LEFTOVER, ""
-      dustoff nick
+      dustoff gut!(nm, NICKNAME)
     end
 
     # Internal: parse last name from string
@@ -176,12 +161,17 @@ module Nomener
       format = :lcf if (format == :auto && nm.index(","))
 
       # these constants should have the named match :fam
-      n = nm.match( FIRSTLAST_MATCHER ) if format == :fl
-      n = nm.match( LASTFIRST_MATCHER ) if format == :lf
-      n = nm.match( LASTCOMFIRST_MATCHER ) if format == :lcf
+      nomen = case format
+        when :fl
+          nm.match( FIRSTLAST_MATCHER )
+        when :lf
+          nm.match( LASTFIRST_MATCHER )
+        when :lcf
+          nm.match( LASTCOMFIRST_MATCHER )
+      end
 
-      unless n.nil?
-        last = n[:fam].strip if n[:fam]
+      unless nomen.nil? || nomen[:fam].nil?
+        last = nomen[:fam].strip
         nm.sub!(last, "")
         nm.sub!(",", "")
       end
@@ -232,6 +222,21 @@ module Nomener
       str = str.gsub PERIOD, " "
       str = str.squeeze " "
       str = str.strip
+    end
+
+    # Internal: clean out a given string with a given pattern
+    #   Modfies the given string
+    # str - the string to gut
+    # pattern - the regext to cut with
+    #
+    # Returns the gutted pattern
+    def self.gut!(str = "", pattern = / /)
+      found = []
+      str.gsub! pattern do |pat|
+        found << pat.strip
+        ""
+      end
+      found.join " "
     end
   end
 end
