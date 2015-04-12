@@ -1,16 +1,15 @@
 language: ruby
-bundler_args: --without debug osx optional
+install: bundle install --jobs=3 --retry=3
 script: bundle exec rspec
 
 sudo: false
-cache: bundler
 
 rvm:
   - 2.2.0
   - 2.1.0
   - 2.0.0
   - 1.9.3
-  - rbx-2
+#  - rbx-2
 notifications:
   email: false
 matrix:
