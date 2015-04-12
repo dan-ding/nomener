@@ -161,5 +161,12 @@ module Nomener
       each_pair { |k, v| self[k] = other[k] }
     end
 
+    # Public: return self as a hash. For ruby 1.9.3
+    #
+    # Returns a hash of the name parts
+    def to_h
+      Hash[self.each_pair.to_a]
+    end unless method_defined?(:to_h)
+
   end
 end

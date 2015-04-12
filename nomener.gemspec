@@ -22,7 +22,6 @@ Gem::Specification.new do |spec|
 
   rv = RUBY_VERSION.split(".")[(0..1)].join("")
   if rv >= '19' && rv < '21'
-    spec.add_development_dependency "string-scrub", ">= 0.0.5"
     spec.add_runtime_dependency "string-scrub", ">= 0.0.5"
   end
 

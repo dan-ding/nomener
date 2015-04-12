@@ -1,4 +1,11 @@
 #-- encoding: UTF-8
+
+# For Ruby 1.9.3, 2.0.0
+rv = RUBY_VERSION.split(".")[(0..1)].join("")
+if rv >= '19' && rv < '21'
+  require "string-scrub"
+end
+
 module Nomener
   module Helper
 
