@@ -50,37 +50,32 @@ module Nomener
 
       fix = last.dup
 
-      # if there are multiple last names separated by spaces
-      fix = fix.split(" ").map { |v| v.capitalize }.join " "
-
       # if there are multiple last names separated by a dash
-      if !fix.index("-").nil?
-        fix = fix.split("-").map { |v|
-          v.split(" ").map { |w| w.capitalize }.join " "
-        }.join "-"
-      end
+      fix = fix.split("-").map { |v|
+        v.split(" ").map { |w| w.capitalize }.join " "
+      }.join "-"
 
-      # anything begining with Mac and not ending in [aciozj]
-      if m = fix.match(/Mac([\p{Alpha}]{2,}[^aciozj])/i)
-        unless m[1].match(%r!^
-          hin|
-          hlen|
-          har|
-          kle|
-          klin|
-          kie|
-          hado|     # Portugese
-          evicius|  # Lithuanian
-          iulis|    # Lithuanian
-          ias       # Lithuanian
-        !x)
-          fix.sub!(/Mac#{m[1]}/, "Mac#{m[1].capitalize}")
-        end
-      elsif m = fix.match(/Mc([\p{Alpha}]{2,})/i) # anything beginning with Mc
-        fix.sub!(/Mc#{m[1]}/, "Mc#{m[1].capitalize}")
-      elsif fix.match(/'\p{Alpha}/) # names like D'Angelo or Van 't Hooft
-        fix.gsub!(/('\p{Alpha})/) { |s| (s[-1] != 't') ? s.upcase : s } #no cap 't
-      end
+      # anything begining with Mac and not ending in [aciozj], except for a few
+      fix.sub!(/Mac(?!
+        hin|
+        hlen|
+        har|
+        kle|
+        klin|
+        kie|
+        hado|     # Portugese
+        evicius|  # Lithuanian
+        iulis|    # Lithuanian
+        ias       # Lithuanian
+      )([\p{Alpha}]{2,}[^aAcCiIoOzZjJ])\b/x) { |s| "Mac#{$1.capitalize}" }
+      
+      fix.sub! /\bMacmurdo\b/, "MacMurdo" # fix MacMurdo
+
+      # anything beginning with Mc, Mcdonald == McDonald
+      fix.sub!(/Mc(\p{Alpha}{2,})/) { |s| "Mc#{$1.capitalize}" }
+
+      # names like D'Angelo or Van 't Hooft, no cap 't
+      fix.gsub!(/('\p{Alpha})(?=\p{Alpha})/) { |s| "'#{$1[(1..-1)].capitalize}" }
 
       fix
     end

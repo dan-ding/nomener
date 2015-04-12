@@ -81,12 +81,17 @@ module Nomener
       name.squeeze! " "
       name.strip!
 
-      first = last = middle = ""
+      first = middle = ""
+      last = name # possibly mononyms
 
       # if there's a comma, it may be a useful hint
       if !name.index(',').nil? # && (format[:order] == :auto || format[:order] == :lcf)
         clues = name.split(",")
         clues.each { |i| i.strip! }
+
+        raise ParseError, "Could not decipher commas in \"#{name}\"" if clues.length > 2
+
+        last = clues.shift if clues.length == 1
 
         # convention is last, first
         if clues.length == 2
@@ -106,17 +111,11 @@ module Nomener
           end
           # titles are part of the first name
           title = parse_title!(first) if title.nil? || title.empty?
-        elsif clues.length == 1
-          last = clues.shift
-        else
-          raise ParseError, "Could not decipher commas in \"#{name}\""
         end
+        
       elsif !name.index(" ").nil?
         last = parse_last!(name, format[:order])
         first, middle = parse_first!(name, format[:spacelimit])
-      else
-        last = name # possibly mononym
-        first = ""
       end
 
       {
