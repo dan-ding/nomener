@@ -2,9 +2,7 @@
 
 # For Ruby 1.9.3, 2.0.0
 rv = RUBY_VERSION.split(".")[(0..1)].join("")
-if rv >= '19' && rv < '21'
-  require "string-scrub"
-end
+require "string-scrub" if(rv >= '19' && rv < '21')
 
 module Nomener
   module Helper
@@ -20,24 +18,23 @@ module Nomener
     #
     # Returns a string which is (ideally) pretty much the same as it was given.
     def self.reformat(name, leftleft = '"', rightright = '"', left = "'", right = "'")
-      n = name.dup
-      n.scrub! # remove illegal characters
+      nomen = name.dup
+      nomen.scrub! # remove illegal characters
 
       # translate fullwidth to typewriter
-      n.tr!("\uFF02\uFF07", "\u0022\u0027")
+      nomen.tr!("\uFF02\uFF07", "\u0022\u0027")
 
-      n.tr!("\u0022\u00AB\u201C\u201E\u2036\u300E\u301D\u301F\uFE43", leftleft) # replace left double quotes
-      n.tr!("\u0022\u00BB\u201D\u201F\u2033\u300F\u301E\uFE44", rightright) # replace right double quotes
+      nomen.tr!("\u0022\u00AB\u201C\u201E\u2036\u300E\u301D\u301F\uFE43", leftleft) # replace left double quotes
+      nomen.tr!("\u0022\u00BB\u201D\u201F\u2033\u300F\u301E\uFE44", rightright) # replace right double quotes
 
-      n.tr!("\u0027\u2018\u201A\u2035\u2039\u300C\uFE41\uFF62", left) # replace left single quotes
-      n.tr!("\u0027\u2019\u201B\u2032\u203A\u300D\uFE42\uFF62", right) # replace left single quotes
+      nomen.tr!("\u0027\u2018\u201A\u2035\u2039\u300C\uFE41\uFF62", left) # replace left single quotes
+      nomen.tr!("\u0027\u2019\u201B\u2032\u203A\u300D\uFE42\uFF62", right) # replace left single quotes
 
-      #n.gsub!(/\./, ' ')
-      n.gsub!(/[^\p{Alpha}\-&\/ \.\,\'\"#{leftleft}#{rightright}#{left}#{right}\(\)]/, " ") # what others may be in a name?
-      n.gsub!(/\p{Blank}+/, " ") # compress whitespace
-      n.strip! # trim space
+      nomen.gsub!(/[^\p{Alpha}\-&\/ \.\,\'\"#{leftleft}#{rightright}#{left}#{right}\(\)]/, " ") # what others may be in a name?
+      nomen.squeeze! " "
+      nomen.strip!
 
-      n
+      nomen
     end
 
   end

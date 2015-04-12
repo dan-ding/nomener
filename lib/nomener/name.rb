@@ -68,7 +68,7 @@ module Nomener
         iulis|    # Lithuanian
         ias       # Lithuanian
       )([\p{Alpha}]{2,}[^aAcCiIoOzZjJ])\b/x) { |s| "Mac#{$1.capitalize}" }
-      
+
       fix.sub! /\bMacmurdo\b/, "MacMurdo" # fix MacMurdo
 
       # anything beginning with Mc, Mcdonald == McDonald

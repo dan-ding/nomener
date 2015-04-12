@@ -15,7 +15,7 @@ module Nomener
     TRAILER_TRASH = /[,|\s]+$/
 
     # regex for name characters we aren't going to use
-    DIRTY_STUFF = /[^,'(?:\p{Alpha}(?<\.))\p{Alpha}]{2,}/
+    DIRTY_STUFF = /[^,'(?:\p{Alpha}(?<\.))\p{Alpha}\p{Blank}]{2,}/
 
     # regex for boundaries we'll use to find leftover nickname boundaries
     NICKNAME_LEFTOVER = /["'\(\)]{2}/
@@ -62,84 +62,58 @@ module Nomener
     # Returns a hash of name parts or nil
     # Raises ArgumentError if 'name' is not a string or is empty
     def self.parse!(name, format = {:order => :auto, :spacelimit => 0})
-      raise ArgumentError, 'Name to parse not provided' unless (name.kind_of?(String) && !name.empty?)
+      raise ArgumentError, "Name to parse not provided" unless (name.kind_of?(String) && !name.empty?)
 
       name = Nomener::Helper.reformat name
+      newname = { :title => "", :first => "", :nick => "", :middle => "", :last => "", :suffix => "" }
 
       # grab any identified nickname before working on the rest
-      nick = parse_nick! name
+      newname[:nick] = parse_nick! name
       cleanup! name
 
       # grab any suffix' we can find
-      suffix = parse_suffix! name
+      newname[:suffix] = parse_suffix! name
       cleanup! name
 
-      title = parse_title! name
-      cleanup! name
+      newname[:title] = parse_title! name
+      name = dustoff name
 
-      name.gsub! PERIOD, ' '
-      name.squeeze! " "
-      name.strip!
+      newname[:last] = name # possibly mononyms
 
-      first = middle = ""
-      last = name # possibly mononyms
-
-      # if there's a comma, it may be a useful hint
-      if !name.index(',').nil? # && (format[:order] == :auto || format[:order] == :lcf)
-        clues = name.split(",")
-        clues.each { |i| i.strip! }
+      
+      case name
+      when /,/ # if there's a comma, it may be a useful hint
+        clues = name.split(",").each { |i| i.strip! }
 
         raise ParseError, "Could not decipher commas in \"#{name}\"" if clues.length > 2
 
-        last = clues.shift if clues.length == 1
-
-        # convention is last, first
-        if clues.length == 2
-          last, first = clues
-
-          # Mies van der Rohe, Ludwig
-          # Snepscheut, Jan L. A. van de
-          # check the last by comparing a re-ordering of the name
-          first_parts = first.split " "
-          unless first_parts.length == 1
-            check = parse_last!("#{first} #{last}", :fl)
-            # let's trust the full name
-            if check != last
-              first = "#{first} #{last}".sub(check, '').strip
-              last = check
-            end
-          end
-          # titles are part of the first name
-          title = parse_title!(first) if title.nil? || title.empty?
-        end
+        # convention is last, first when there's a comma
+        newname[:last], newname[:first] = clues
         
-      elsif !name.index(" ").nil?
-        last = parse_last!(name, format[:order])
-        first, middle = parse_first!(name, format[:spacelimit])
+        # check the last by comparing a re-ordering of the name
+        # Mies van der Rohe, Ludwig
+        # Snepscheut, Jan L. A. van de
+        unless newname[:first].nil? || newname[:first].split(" ").length == 1
+          check = parse_last!("#{newname[:first]} #{newname[:last]}", :fl)
+
+          # let's trust the full name
+          if check != newname[:last]
+            newname[:first] = "#{newname[:first]} #{newname[:last]}".sub(check, "").strip
+            newname[:last] = check
+          end
+        end
+
+        # titles which are part of the first name...
+        newname[:title] = parse_title!(newname[:first]) if newname[:title].empty?
+        
+      when / / # no comma, check for space on first then last
+        newname[:last] = parse_last!(name, format[:order])
+        newname[:first], newname[:middle] = parse_first!(name, format[:spacelimit])
       end
 
-      {
-        :title => (title || "").strip,
-        :suffix => (suffix || "").strip,
-        :nick => (nick || "").strip,
-        :first => (first || "").strip,
-        :last => (last || "").strip,
-        :middle => (middle || "").strip
-      }
-    end
+      cleanup! newname[:last], newname[:first], newname[:middle]
 
-    # Internal: Clean up a string where there are numerous consecutive and trailing non-name characters.
-    #   Modifies given string in place.
-    #
-    # dirty - string to clean up
-    #
-    # Returns nothing
-    def self.cleanup!(dirty)
-      dirty.gsub! DIRTY_STUFF, ''
-      dirty.squeeze! " "
-      # remove any trailing commas or whitespace
-      dirty.gsub! TRAILER_TRASH, ''
-      dirty.strip!
+      newname
     end
 
     # Internal: pull off a title if we can
@@ -152,13 +126,9 @@ module Nomener
       titles = []
       nm.gsub! TITLES do |title|
         titles << title.strip
-        ''
+        ""
       end
-      t = titles.join " "
-      t.gsub! PERIOD, ' '
-      t.squeeze! " "
-      t.strip!
-      t
+      dustoff titles.join(" ")
     end
 
     # Internal: pull off what suffixes we can
@@ -171,13 +141,9 @@ module Nomener
       suffixes = []
       nm.gsub! SUFFIXES do |suffix|
         suffixes << suffix.strip
-        ''
+        ""
       end
-      s = suffixes.join " "
-      s.gsub! /\./, ' '
-      s.squeeze! " "
-      s.strip!
-      s
+      dustoff suffixes.join(" ")
     end
 
     # Internal: parse nickname out of string. presuming it's in quotes
@@ -188,14 +154,12 @@ module Nomener
     # Returns string of the nickname found or and empty string
     def self.parse_nick!(nm)
       nick = ""
-      nm.sub! NICKNAME, ''
-      nick = $1.strip unless $1.nil?
-      nm.sub! NICKNAME_LEFTOVER, ''
-      nm.squeeze! " "
-      nick.gsub! /\./, ' '
-      nick.squeeze! " "
-      nick.strip!
-      nick
+      nm.sub! NICKNAME do |z|
+        nick = $1.strip
+        ""
+      end
+      nm.sub! NICKNAME_LEFTOVER, ""
+      dustoff nick
     end
 
     # Internal: parse last name from string
@@ -206,24 +170,22 @@ module Nomener
     #
     # Returns string of the last name found or an empty string
     def self.parse_last!(nm, format = :fl)
-      last = ''
+      last = ""
 
-      if format == :auto
-        format = :fl if nm.index(',').nil?
-      #  format = :lcf if !nm.index(',').nil?
+      format = :fl  if (format == :auto && nm.index(",").nil?)
+      format = :lcf if (format == :auto && nm.index(","))
+
+      # these constants should have the named match :fam
+      n = nm.match( FIRSTLAST_MATCHER ) if format == :fl
+      n = nm.match( LASTFIRST_MATCHER ) if format == :lf
+      n = nm.match( LASTCOMFIRST_MATCHER ) if format == :lcf
+
+      unless n.nil?
+        last = n[:fam].strip if n[:fam]
+        nm.sub!(last, "")
+        nm.sub!(",", "")
       end
 
-      if format == :fl && n = nm.match( FIRSTLAST_MATCHER )
-        last = n[:fam].strip
-        nm.sub!(last, "").strip!
-      elsif format == :lf && n = nm.match( LASTFIRST_MATCHER )
-        last = n[:fam].strip
-        nm.sub!(last, "").strip!
-      elsif format == :lcf && n = nm.match( LASTCOMFIRST_MATCHER )
-        last = n[:fam].strip
-        nm.sub!(last, "").strip!
-        nm.sub!(',', "").strip!
-      end
       last
     end
 
@@ -235,11 +197,41 @@ module Nomener
     #
     # Returns an array containing the first name and middle name if any
     def self.parse_first!(nm, namecount = 0)
-      nm.tr! '.', ' '
-      first, middle = nm.split ' ', namecount
+      nm.tr! ".", " "
+      nm.squeeze! " "
+      first, middle = nm.split " ", namecount
 
       [first || "", middle || ""]
     end
 
+    private
+    # Internal: Clean up a string where there are numerous consecutive and trailing non-name characters.
+    #   Modifies given string in place.
+    #
+    # args - strings to clean up
+    #
+    # Returns nothing
+    def self.cleanup!(*args)
+      args.each do |dirty|
+        next if(dirty.nil? || !dirty.kind_of?(String))
+
+        dirty.gsub! DIRTY_STUFF, ""
+        dirty.squeeze! " "
+        # remove any trailing commas or whitespace
+        dirty.gsub! TRAILER_TRASH, ""
+        dirty.strip!
+      end
+    end
+
+    # Internal: a softer clean we keep re-using
+    #
+    # str - the string to dust off
+    #
+    # Returns the nice clean
+    def self.dustoff(str)
+      str = str.gsub PERIOD, " "
+      str = str.squeeze " "
+      str = str.strip
+    end
   end
 end

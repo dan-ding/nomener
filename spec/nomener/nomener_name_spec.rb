@@ -81,6 +81,33 @@ RSpec.describe "Nomener::Name" do
     end
   end
 
+  context "with last name alternates" do
+    name = Nomener::Name.new("Joe Smith")
+
+    it "returns from surname the last name" do
+      expect(name.surname).to eq "Smith"
+    end
+
+    it "returns from family the last name" do
+      expect(name.family).to eq "Smith"
+    end
+  end
+
+  context "with first name alternate" do
+    name = Nomener::Name.new("Joe Smith")
+
+    it "returns from surname the last name" do
+      expect(name.given).to eq "Joe"
+    end
+  end
+
+  context "with a name method to_h" do
+    it "responds with a hash" do
+      name = Nomener::Name.new("Joe Smith")
+      expect(name.to_h).to be_a Hash
+    end
+  end
+
   context "with capit" do
     name = Nomener::Name.new
     [
