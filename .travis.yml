@@ -1,6 +1,6 @@
 language: ruby
 bundler_args: --without debug osx optional
-script: bundle exec rake test_with_coveralls
+script: bundle exec rspec
 
 sudo: false
 cache: bundler
