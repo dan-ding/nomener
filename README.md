@@ -8,6 +8,8 @@ Nomener assists with parsing peoples names that they give themselves (or other p
 
 If you didn't know, parsing names can be much more difficult than it seems it should be.
 
+Two of the main goals are to support (a) UX in a similar manner as described by [not splitting form fields](http://www.w3.org/International/questions/qa-personal-names#singlefield) and (b) an easy manner to handle parsing of strings which contain a name.
+
 ## Requirements
 
 Requires Ruby 1.9.3 or higher (or equivalent).
@@ -37,15 +39,38 @@ name = Nomener.parse "Joe Smith" # <Nomener::Name first="Joe" last="Smith">
 Create a new instance:
 ```ruby
 name = Nomener::Name.new "Duke Joe (Henry) Smith Jr."
- # name is <Nomener::Name title="Duke" first="Joe" nick="Henry" last="Smith" suffix="Jr">
+#<Nomener::Name title="Duke" first="Joe" nick="Henry" last="Smith" suffix="Jr">
+```
+returns the same as:
+```ruby
+name = Nomener.parse "Duke Joe (Henry) Smith Jr."
 
-name.first                           # Joe
-name.name                            # Joe Smith
-"Hi #{name}!"                        # Hi Joe Smith!
-name.last                            # Smith
+name.first                           # "Joe"
+name.name                            # "Joe Smith"
+"Hi #{name}!"                        # "Hi Joe Smith!""
+name.last                            # "Smith"
 name.title                           # "Duke"
 name.suffix                          # "Jr"
 name.nick                            # "Henry"
+```
+## Formatting
+
+The .name method accepts a string to format the name however you may like.
+It defaults to "%f %l", which is the first and last name.
+
+Other options are:
+-  %f # first name
+-  %l # last/surname/family name
+-  %m # middle name
+-  %n # nick name
+-  %m # middle name
+-  %s # suffix
+-  %t # title/prefix
+
+```ruby
+name = Nomener::Name.new "Duke Joe (Henry) Smith Jr."
+name.name "%l, %f"               # "Smith, Joe"
+name.name "%t %l"                # "Duke Smith"
 ```
 
 ## TODO
@@ -55,6 +80,8 @@ name.nick                            # "Henry"
 * specifying formats to parse by
 * many other things
 * better non-english support
+* translations
+* NLP?
 
 ## References
 * [http://en.wikipedia.org/wiki/Personal_name](http://en.wikipedia.org/wiki/Personal_name)
