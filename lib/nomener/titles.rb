@@ -57,8 +57,11 @@ module Nomener
       | Lt\.?(?:\p{Blank}(?:Cdr|Col|Gen)\.?)? # Lt, Lt Col, Lt Cdr, Lt Gen
       | (?:Lt|Leut|Lieut)\.?
       | Lord
+#      | M\.?                            # French
       | Madam(?:e)?
+      | Mademoiselle                    # French
       | Maid
+      | Ma[îi]tre                       # French
       | Major(?:\p{Blank}General)?      # Major, Major General
       | Maj\.?(?:\p{Blank}Gen\.?)?      # Maj, Maj Gen
       | (?:Master|Technical|Staff)?\p{Blank}?Sergeant
@@ -68,10 +71,13 @@ module Nomener
       | Menina
       | Messrs
       | Meneer
+      | Mlle\.?                         # French
       | Miss\.?
       | Mister
       | Mn[er]\.?                       # Mne (Mnr) Afrikaans Mr.
+      | Mme\.?                          # French
       | Mons(?:ignor|\.?)               # Monsignor
+      | Monsieur                        # French
       | Most\p{Blank}Rever[e|a]nd
       | Mother(?:\p{Blank}Superior)?    # Mother, Mother Superior
       | Mrs?\.?
@@ -82,7 +88,7 @@ module Nomener
       | (?-i:ông)                       # Vietnamese Mr. must be lowercase
       | Pastor
       | Private
-      | Prof(?:essor|\.)?               # Professor, Prof
+      | Prof(?:essor|esseur|\.)?        # Professor, Professeur, Prof
       | Pte\.?                          # Private
       | Pvt\.?                          # Private
       | PFC                             # Private first class
