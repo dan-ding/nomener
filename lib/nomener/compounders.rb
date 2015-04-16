@@ -1,10 +1,10 @@
 #-- encoding: UTF-8
 module Nomener
+  # Module for assist with finding family name compounds and prefixes
   module Compounders
     # Many of these are from http://en.wikipedia.org/wiki/List_of_family_name_affixes
-
     # Internal: Regex last name prefixes.
-    COMPOUNDS = %r!(?<part>(?:
+    COMPOUNDS = %r/(?<part>(?:
       Ab
       | Ap
       | Abu
@@ -74,6 +74,6 @@ module Nomener
       | Zu
       | (?-i:y)
       | 't
-    )\b\p{Blank}?\g<part>*)*!xi
+    )\b\p{Blank}?\g<part>*)*/xi
   end
 end

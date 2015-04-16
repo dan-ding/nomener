@@ -1,23 +1,22 @@
 #-- encoding: UTF-8
-require "nomener/parser"
+require 'nomener/parser'
 
 module Nomener
+  # name class for general purposes
   class Name < Struct.new :title, :first, :middle, :nick, :last, :suffix
-
     # we don't want to change what we were instantiated with
     attr_reader :original
 
     # Public: Create an instance!
     def initialize(nomen = '')
-      @original = ""
-      if nomen.kind_of?(String)
-        @original = Nomener::Helper.reformat nomen
-        parse
-      end
+      return @original = '' unless nomen.is_a?(String)
+      @original = Cleaner.reformat nomen
+      parse
     end
 
     # Public: Break down a string into parts of a persons name
-    #   As of 0.2.5 parse no longer needs to be called after initialization, it's done automatically.
+    #   As of 0.2.5 parse no longer needs to be called after initialization,
+    #   it's done automatically. Recalling it doesn't hurt though.
     #
     # name - A string of name to parse
     #
@@ -32,12 +31,11 @@ module Nomener
     #
     # Returns a string of the full name in a proper (western) case
     def properlike
-      f = (first || "").capitalize
-      n = (nick.nil? || nick.empty?) ? "" : "\"#{nick}\""
-      m = (middle || "").capitalize
-      l = capit(last || "")
-      t = (title || "").capitalize
-      "#{t} #{f} #{n} #{m} #{l} #{suffix}".strip.gsub(/\p{Blank}+/, ' ')
+      [capit(title), capit(first),
+        (nick.to_s.empty? ? '' : "\"#{nick}\""),
+        capit(middle), capit(last),
+        suffix
+      ].join(' ').strip.squeeze ' '
     end
 
     # Internal: try to capitalize last names with Mac and Mc and D' and such
@@ -46,19 +44,15 @@ module Nomener
     #
     # Returns a string of the capitalized name
     def capit(last)
-      return "" if last.nil? || last.empty?
-
-      fix = last.dup
+      fix = last.to_s.dup
 
       # if there are multiple last names separated by a dash
-      fix = fix.split("-").map { |v|
-        v.split(" ").map { |w| w.capitalize }.join " "
-      }.join "-"
+      fix = fix.split('-')
+        .map { |outer| outer.split(' ').map(&:capitalize).join ' ' }.join '-'
 
       # anything begining with Mac and not ending in [aciozj], except for a few
       fix.sub!(/Mac(?!
-        hin|
-        hlen|
+        hin|hlen|
         har|
         kle|
         klin|
@@ -67,15 +61,15 @@ module Nomener
         evicius|  # Lithuanian
         iulis|    # Lithuanian
         ias       # Lithuanian
-      )([\p{Alpha}]{2,}[^aAcCiIoOzZjJ])\b/x) { |s| "Mac#{$1.capitalize}" }
+      )([\p{Alpha}]{2,}[^aAcCiIoOzZjJ])\b/x) { "Mac#{$1.capitalize}" }
 
-      fix.sub! /\bMacmurdo\b/, "MacMurdo" # fix MacMurdo
+      fix.sub!(/\bMacmurdo\b/, 'MacMurdo') # fix MacMurdo
 
       # anything beginning with Mc, Mcdonald == McDonald
-      fix.sub!(/Mc(\p{Alpha}{2,})/) { |s| "Mc#{$1.capitalize}" }
+      fix.sub!(/Mc(\p{Alpha}{2,})/) { |s| "Mc#{s[2..-1].capitalize}" }
 
       # names like D'Angelo or Van 't Hooft, no cap 't
-      fix.gsub!(/('\p{Alpha})(?=\p{Alpha})/) { |s| "'#{$1[(1..-1)].capitalize}" }
+      fix.gsub!(/('\p{Alpha})(?=\p{Alpha})/) { |s| "'#{s[(1..-1)].capitalize}" }
 
       fix
     end
@@ -84,7 +78,10 @@ module Nomener
     #
     # Returns a nicely formatted string
     def inspect
-      "#<Nomener::Name #{each_pair.map { |k,v| [k,v.inspect].join('=') if (!v.nil? && !v.empty?) }.compact.join(' ')}>"
+      "#<Nomener::Name #{
+        each_pair.map { |k, v| [k, v.inspect].join('=') unless v.to_s.empty? }
+        .compact
+        .join(' ') }>"
     end
 
     # Public: an alias for the last name
@@ -93,7 +90,7 @@ module Nomener
     def surname
       last
     end
-    alias :family :surname
+    alias_method :family, :surname
 
     # Public: Return the first name
     #
@@ -104,7 +101,7 @@ module Nomener
 
     # Public: Make the name a string.
     #
-    # format - a string using symboles specifying the format of the name to return
+    # format - a string using symbols for the format of the name to return
     #   defaults to "%f %l"
     #     %f -> first name
     #     %l -> last/surname/family name
@@ -118,16 +115,15 @@ module Nomener
     #   defaults to true
     #
     # Returns the name as a string
-    def name(format = "%f %l", propercase = true)
+    def name(format = '%f %l', _propercase = true)
       nomen = to_h
-      nomen[:nick] = (nick.nil? || nick.empty?) ? "" : "\"#{nick}\""
-      format.gsub! /\%f/, '%{first}'
-      format.gsub! /\%l/, '%{last}'
-      format.gsub! /\%m/, '%{middle}'
-      format.gsub! /\%n/, '%{nick}'
-      format.gsub! /\%s/, '%{suffix}'
-      format.gsub! /\%t/, '%{title}'
-      (format % nomen).strip.gsub /\p{Blank}+/, " "
+      nomen[:nick] = (nick.nil? || nick.empty?) ? '' : "\"#{nick}\""
+
+      format = format.gsub(/%[flmnst]/,
+        '%f' => '%{first}', '%l' => '%{last}', '%m' => '%{middle}',
+        '%n' => '%{nick}', '%s' => '%{suffix}', '%t' => '%{title}'
+      )
+      (format % nomen).strip.squeeze ' '
     end
 
     # Public: Shortcut for name format
@@ -135,15 +131,15 @@ module Nomener
     #
     # Returns the full name
     def full
-      name("%f %m %l")
+      name '%f %m %l'
     end
-    alias :fullname :full
+    alias_method :fullname, :full
 
     # Public: See name
     #
     # Returns the name as a string
     def to_s
-      name("%f %l")
+      name '%f %l'
     end
 
     # Internal: merge another Nomener::Name to this one
@@ -152,16 +148,15 @@ module Nomener
     #
     # Returns nothing
     def merge(other)
-      return self unless other.kind_of?(Hash)
-      each_pair { |k, v| self[k] = other[k] }
+      return self unless other.is_a?(Hash)
+      each_pair { |k, _| self[k] = other[k] }
     end
 
     # Public: return self as a hash. For ruby 1.9.3
     #
     # Returns a hash of the name parts
     def to_h
-      Hash[self.each_pair.to_a]
+      Hash[each_pair.to_a]
     end unless method_defined?(:to_h)
-
   end
 end
