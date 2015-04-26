@@ -31,24 +31,25 @@ module Nomener
     #
     # Returns a string of the full name in a proper (western) case
     def properlike
-      [capit(title), capit(first),
-        (nick.to_s.empty? ? '' : "\"#{nick}\""),
-        capit(middle), capit(last),
+      [capit(title),
+        capit(first),
+        (nick.to_s.empty? ? '' : "#{Nomener.config.left}#{nick}#{Nomener.config.right}"),
+        capit(middle),
+        capit(last),
         suffix
       ].join(' ').strip.squeeze ' '
     end
 
-    # Internal: try to capitalize last names with Mac and Mc and D' and such
+    # Internal: try to capitalize names including tough ones like Mac and Mc and D' and such
     #
-    # last - string of the name to capitalize
+    # nomen - string of the name to capitalize
     #
     # Returns a string of the capitalized name
-    def capit(last)
-      fix = last.to_s.dup
-
-      # if there are multiple last names separated by a dash
-      fix = fix.split('-')
-        .map { |outer| outer.split(' ').map(&:capitalize).join ' ' }.join '-'
+    def capit(nomen)
+      # if there are multiple names separated by a dash
+      fix = nomen.to_s.dup.split('-').map do |outer|
+        outer.split(' ').map(&:capitalize).join ' '
+      end.join '-'
 
       # anything begining with Mac and not ending in [aciozj], except for a few
       fix.sub!(/Mac(?!
@@ -131,7 +132,7 @@ module Nomener
     #
     # Returns the full name
     def full
-      name '%f %m %l'
+      name Nomener.config.format
     end
     alias_method :fullname, :full
 

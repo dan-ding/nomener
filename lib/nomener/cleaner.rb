@@ -26,22 +26,20 @@ module Nomener
     #  Needs to be fixed up for matching and non-english quotes
     #
     # name - the string to clean
-    # double - the double quotes to replace others with "" by default
-    # single - the single quotes to replace others with '' by default
     #
     # Returns a string which is (ideally) pretty much the same as it was given.
-    def self.reformat(name, double = '""', single = "''")
+    def self.reformat(name)
       @@allowable = %r![^\p{Alpha}\-&\/\ \.\,\'\"\(\)
-        #{double[0] || '"'}
-        #{double[1] || '"'}
-        #{single[0] || "'"}
-        #{single[1] || "'"}] !x unless @@allowable
+        #{Nomener.config.left}
+        #{Nomener.config.right}
+        #{Nomener.config.single}
+        ] !x unless @@allowable
 
       # remove illegal characters, translate fullwidth down
       nomen = name.dup.scrub.tr("\uFF02\uFF07", "\u0022\u0027")
 
-      nomen = replace_doubles(nomen, double)
-      replace_singles(nomen, single)
+      nomen = replace_doubles(nomen)
+      replace_singles(nomen)
         .gsub(/@@allowable/, ' ')
         .squeeze(' ')
         .strip
@@ -69,11 +67,10 @@ module Nomener
     # Internal: Replace various double quote characters with given char
     #
     # str - the string to find replacements in
-    # double - string with two characters, the left and right quotes
     #
     # Returns the string with the quotes replaced
-    def self.replace_doubles(str, double)
-      left, right = quotes_from double
+    def self.replace_doubles(str)
+      left, right = [Nomener.config.left, Nomener.config.right]
 
       # replace left and right double quotes
       str.tr("\u0022\u00AB\u201C\u201E\u2036\u300E\u301D\u301F\uFE43", left)
@@ -84,19 +81,18 @@ module Nomener
     # Internal: Replace various single quote characters with given chars
     #
     # str - the string to find replacements in
-    # double - string with two characters, the left and right quotes
     #
     # Returns the string with the quotes replaced
-    def self.replace_singles(str, single)
-      left, right = quotes_from single
+    def self.replace_singles(str)
 
       # replace left and right single quotes
-      str.tr("\u0027\u2018\u201A\u2035\u2039\u300C\uFE41\uFF62", left)
-        .tr("\u0027\u2019\u201B\u2032\u203A\u300D\uFE42\uFF62", right)
+      str.tr("\u0027\u2018\u201A\u2035\u2039\u300C\uFE41\uFF62", Nomener.config.single)
+        .tr("\u0027\u2019\u201B\u2032\u203A\u300D\uFE42\uFF62", Nomener.config.single)
     end
     private_class_method :replace_singles
 
     # Internal: Get the quotes from a string
+    #  Currently unused. To Be Removed.
     #
     # str - the string of two characters for the left and right quotes
     #
